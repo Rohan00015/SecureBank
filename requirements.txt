@@ -1,0 +1,14 @@
+Flask
+Flask-Mail
+Pillow
+requests
+werkzeug
+gunicorn
+
+#Database libraries
+
+Flask-SQLAlchemy
+psycopg2-binary
+
+#GCloud library (Good practice for potential future GCS/other integrations)
+

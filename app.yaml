@@ -1,0 +1,22 @@
+# Use the Python 3.11 runtime (or choose a newer supported version if available)
+runtime: python311
+
+# The entrypoint tells App Engine how to start your web server.
+# It uses Gunicorn, a production-ready WSGI server.
+# 'app:app' means: In the file named 'app.py', find the Flask app instance named 'app'.
+entrypoint: gunicorn -b :$PORT app:app
+
+# Handlers define how App Engine routes incoming requests.
+handlers:
+  # Route requests for /static/* to the static directory
+  - url: /static
+    static_dir: static
+
+  # Route all other requests to your Flask application script (app.py)
+  - url: /.*
+    script: auto
+
+# Optional: Set environment variables here if needed,
+# though it's often better to manage secrets using Secret Manager.
+# env_variables:
+#   YOUR_ENV_VAR: 'your_value'

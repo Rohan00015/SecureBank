@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank - {{ title }}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f172a; /* Deep Slate */
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%), 
+                radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Card Utility */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        /* Interactive Form Elements */
+        .glass-input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.2s ease;
+        }
+        .glass-input:focus {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+            outline: none;
+        }
+
+        /* Glowing Button */
+        .btn-glow {
+            background-size: 200% auto;
+            transition: 0.5s;
+        }
+        .btn-glow:hover {
+            background-position: right center;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Chat Bubbles */
+        .chat-bubble {
+            max-width: 85%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .chat-bubble.user {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.2rem;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+        }
+        .chat-bubble.bot {
+            background: rgba(51, 65, 85, 0.8);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: #f1f5f9;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.2rem;
+        }
+
+        .error-pre {
+            background-color: #0f172a;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            border: 1px solid #dc2626;
+            color: #fca5a5;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+    {% block extra_styles %}{% endblock %}
+</head>
+<body class="antialiased flex flex-col min-h-screen">
+
+    <header class="sticky top-0 z-50 glass-card border-b-0 rounded-b-xl mx-2 mt-2">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{{ url_for('index') }}" class="flex-shrink-0 flex items-center space-x-3 group">
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-blue-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                            <img class="h-10 w-auto relative" src="{{ url_for('static', filename='images/logo.png') }}" alt="SecureBank Logo">
+                        </div>
+                        <span class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">SecureBank</span>
+                    </a>
+                </div>
+                
+                {% if current_user %}
+                <div class="flex items-center space-x-4">
+                     
+                     <div class="hidden sm:flex items-center space-x-4">
+                         {% if current_user.role == 'admin' %}
+                            <a href="{{ url_for('admin_dashboard') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-yellow-300 hover:bg-white/5 transition-colors">Admin Panel</a>
+                         {% else %}
+                            <a href="{{ url_for('dashboard') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">Dashboard</a>
+                         {% endif %}
+                     </div>
+                     
+                     <div class="relative ml-3" id="user-menu-container">
+                        <button type="button" onclick="toggleUserMenu()" class="flex items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-transform hover:scale-105" id="user-menu-button">
+                            <span class="sr-only">Open user menu</span>
+                            <img class="h-9 w-9 rounded-full object-cover border-2 border-gray-600 hover:border-blue-400 transition-colors" src="{{ current_user.profile_picture_url }}?v={{ session.get('profile_pic_version', (range(1, 1000) | random)) }}" alt="Profile">
+                        </button>
+
+                        <div id="user-menu-dropdown" class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-xl bg-[#1e293b] py-1 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none transform transition-all duration-200 ease-out opacity-0 scale-95 border border-gray-700">
+                            
+                            <div class="px-4 py-3 border-b border-gray-700">
+                                <p class="text-xs text-gray-400 uppercase tracking-wider">Signed in as</p>
+                                <p class="text-sm font-bold text-white truncate">{{ current_user.email }}</p>
+                            </div>
+                            
+                            <div class="py-1">
+                                {% if current_user.role == 'admin' %}
+                                    <a href="{{ url_for('admin_dashboard') }}" class="block sm:hidden px-4 py-2 text-sm text-yellow-300 hover:bg-blue-600 hover:text-white transition-colors">Admin Panel</a>
+                                {% else %}
+                                    <a href="{{ url_for('dashboard') }}" class="block sm:hidden px-4 py-2 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-colors">Dashboard</a>
+                                {% endif %}
+
+                                <a href="{{ url_for('profile') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-colors">Your Profile</a>
+                                
+                                {% if current_user.role != 'admin' %}
+                                <a href="{{ url_for('history') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-colors">History</a>
+                                {% endif %}
+                                
+                                {% if current_user.role == 'admin' %}
+                                <a href="{{ url_for('admin_dashboard') }}#admin-history" class="block px-4 py-2 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-colors">Admin History</a>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="border-t border-gray-700 py-1">
+                                <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-sm text-red-400 hover:bg-red-900/30 transition-colors">Sign out</a>
+                            </div>
+                        </div>
+                     </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-8 space-y-4">
+                    {% for category, message in messages %}
+                        <div class="p-4 rounded-xl flex items-center shadow-lg backdrop-blur-md border
+                            {% if category == 'danger' %} bg-red-900/40 text-red-200 border-red-500/30
+                            {% elif category == 'success' %} bg-emerald-900/40 text-emerald-200 border-emerald-500/30
+                            {% else %} bg-amber-900/40 text-amber-200 border-amber-500/30
+                            {% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="mt-auto border-t border-gray-800 bg-[#0f172a]/80 backdrop-blur-sm py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-500 text-sm">
+                &copy; {{ now_year if now_year else '2025' }} SecureBank. Engineered for Security.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleUserMenu() {
+            const menu = document.getElementById('user-menu-dropdown');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                setTimeout(() => { menu.classList.remove('opacity-0', 'scale-95'); menu.classList.add('opacity-100', 'scale-100'); }, 10);
+            } else {
+                menu.classList.remove('opacity-100', 'scale-100'); menu.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => { menu.classList.add('hidden'); }, 200);
+            }
+        }
+        window.addEventListener('click', function(e) {
+            const container = document.getElementById('user-menu-container');
+            const menu = document.getElementById('user-menu-dropdown');
+            if (container && !container.contains(e.target) && !menu.classList.contains('hidden')) toggleUserMenu();
+        });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

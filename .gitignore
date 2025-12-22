@@ -1,0 +1,58 @@
+#Byte-compiled / optimized / DLL files
+
+pycache/*.pyc*.pyo*.pyd
+
+#C extensions
+*.so
+
+#Distribution / packaging
+.Pythonbuild/develop-eggs/dist/downloads/eggs/.eggs/lib/lib64/parts/sdist/var/wheels/*.egg-info/.installed.cfg*.egg MANIFEST
+
+#PyInstaller
+
+#Usually ignored by organizing project structure, but potentially unwanted files are
+*.manifest
+*.spec
+
+#Installer logs
+
+pip-log.txt pip-delete-this-directory.txt
+
+#Unit test / coverage reports
+
+htmlcov/.tox/.nox/.coverage.coverage.*.cache nosetests.xml coverage.xml*.cover*.py,cover.hypothesis/.pytest_cache/
+
+#Translations
+*.mo*.pot
+
+#Flask stuff: session keys, environment variables, instance folder
+
+instance/.webassets-cache.env*.env
+
+#Virtual environment folders
+
+venv/env/ENV/.venv/
+
+#Databases (Local test databases like SQLite)
+*.db*.sqlite3
+
+#Operating System Files (macOS, Windows)
+
+.DS_StoreThumbs.db
+
+#Cloud SDK files (like gcloud configurations)
+
+.gcloud/
+
+#Sensitive configuration files (if you use them)
+
+config.py
+
+settings.py
+
+#Log files
+*.loglogs/
+
+#IDE specific files
+
+.idea/.vscode/*.swp

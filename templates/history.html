@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="glass-card rounded-2xl p-8 min-h-[80vh]">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-white">Transaction History</h1>
+            <p class="text-gray-400 text-sm">A complete record of your account activity.</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 text-sm font-medium">Dashboard</a>
+    </div>
+
+    <div class="overflow-x-auto rounded-xl border border-gray-700/50">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-800/50 border-b border-gray-700">
+                    <th class="p-4 text-xs font-semibold text-gray-500 uppercase">Date</th>
+                    <th class="p-4 text-xs font-semibold text-gray-500 uppercase">Tx ID</th>
+                    <th class="p-4 text-xs font-semibold text-gray-500 uppercase">Details</th>
+                    <th class="p-4 text-xs font-semibold text-gray-500 uppercase text-right">Amount</th>
+                    <th class="p-4 text-xs font-semibold text-gray-500 uppercase text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700/30 bg-gray-900/20">
+                {% for tx in transactions %}
+                <tr class="hover:bg-blue-500/5 transition-colors">
+                    <td class="p-4 text-sm text-gray-300 whitespace-nowrap">{{ tx.timestamp|strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td class="p-4 text-xs font-mono text-gray-500">{{ tx.id }}</td>
+                    <td class="p-4 text-sm text-gray-200">
+                        {% if tx.sender_account == account_number %}
+                            <span class="text-red-400 font-medium">Sent to</span> {{ tx.recipient_name }}
+                            <div class="text-xs text-gray-500">{{ tx.recipient_account }}</div>
+                        {% elif tx.sender_account == 'ADMIN' %}
+                             <span class="text-blue-400 font-medium">{{ tx.type }}</span>
+                        {% else %}
+                            <span class="text-emerald-400 font-medium">Received from</span> {{ tx.sender_account }}
+                        {% endif %}
+                    </td>
+                    <td class="p-4 text-right font-medium text-sm">
+                        {% if tx.sender_account == account_number %}
+                            <span class="text-red-400">- ₹{{ "%.2f"|format(tx.amount) }}</span>
+                        {% else %}
+                            <span class="text-emerald-400">+ ₹{{ "%.2f"|format(tx.amount) }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-4 text-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border
+                            {% if tx.status|lower == 'completed' %} bg-emerald-500/10 text-emerald-400 border-emerald-500/20
+                            {% elif tx.status|lower == 'failed' %} bg-red-500/10 text-red-400 border-red-500/20
+                            {% else %} bg-yellow-500/10 text-yellow-400 border-yellow-500/20 {% endif %}">
+                            {{ tx.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="p-12 text-center text-gray-500">No transaction history found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-12">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-white">Login Sessions</h2>
+            <a href="{{ url_for('location_map') }}" class="text-sm text-blue-400 hover:text-blue-300 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                View Map
+            </a>
+        </div>
+        <div class="overflow-x-auto rounded-xl border border-gray-700/50">
+            <table class="w-full text-left">
+                <thead class="bg-gray-800/50 border-b border-gray-700">
+                    <tr>
+                        <th class="p-4 text-xs font-semibold text-gray-500 uppercase">Time</th>
+                        <th class="p-4 text-xs font-semibold text-gray-500 uppercase">IP Address</th>
+                        <th class="p-4 text-xs font-semibold text-gray-500 uppercase">Location</th>
+                        <th class="p-4 text-xs font-semibold text-gray-500 uppercase">Device</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700/30">
+                    {% for login in logins %}
+                    <tr class="hover:bg-white/5">
+                        <td class="p-4 text-sm text-gray-300">{{ login.timestamp|strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td class="p-4 text-xs font-mono text-gray-400">{{ login.ip_address }}</td>
+                        <td class="p-4 text-sm text-gray-300">{{ login.location }}</td>
+                        <td class="p-4 text-xs text-gray-500 max-w-xs truncate" title="{{ login.device_info }}">{{ login.device_info }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
