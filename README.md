@@ -84,11 +84,14 @@ if it is python 3.14.2
 
 
 # FOR different version of python
-1 Download the python version of 3.14.2   and do the setup ,while setup click the path check box
-2 RUN this command
-  py -3.14 -m venv venv          #for creating virtual environment
-  venv\Scripts\activate          #for activating the virtual environment
-  python -m pip install --upgrade pip                                                                                                
-  pip install -r requirements.txt
 
-3 Follow #Step 4
+    1 Download the python version of 3.14.2   and do the setup ,while setup click the path check box
+    
+    2 RUN this command
+      py -3.14 -m venv venv          #for creating virtual environment
+      venv\Scripts\activate          #for activating the virtual environment
+      python -m pip install --upgrade pip                                                                                                
+      pip install -r requirements.txt
+    
+    3 Follow #Step 4
+
