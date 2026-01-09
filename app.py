@@ -566,6 +566,7 @@ def dashboard():
 def profile():
     user, _, _ = get_user_and_account(session['user_id'])
     return render_template('profile.html', title="My Profile", user=user)
+
 @app.route('/profile/update', methods=['POST'])
 @login_required()
 def update_profile():
