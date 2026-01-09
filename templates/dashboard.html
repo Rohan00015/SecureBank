@@ -1,72 +1,100 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="space-y-8">
-    <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 pb-6 border-b border-gray-800">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <div class="flex flex-col md:flex-row justify-between md:items-center gap-6 pb-8 border-b border-gray-700/50">
         <div>
-            <h1 class="text-3xl font-bold text-white tracking-tight">Dashboard</h1>
-            <p class="mt-1 text-gray-400">Welcome back, <span class="text-blue-400 font-semibold">{{ user.full_name or user.email }}</span></p>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">Dashboard</h1>
+            <p class="mt-2 text-gray-400">Welcome back, <span class="text-blue-400 font-semibold">{{ user.full_name or user.email }}</span></p>
         </div>
         
         <form method="post" action="{{ url_for('emergency') }}">
-            <button type="submit" class="w-full md:w-auto px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-lg transform hover:scale-105 flex items-center justify-center
+            <button type="submit" class="group relative w-full md:w-auto px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center overflow-hidden
                 {% if account.emergency_mode %}
-                bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-emerald-900/50
+                bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-red-900/30 ring-2 ring-red-500 ring-offset-2 ring-offset-gray-900
                 {% else %}
-                bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-orange-900/50
+                bg-gray-800 text-gray-300 hover:text-white border border-gray-600 hover:border-gray-500
                 {% endif %}">
+                
                 {% if account.emergency_mode %}
-                <span class="w-2 h-2 rounded-full bg-white mr-2 animate-pulse"></span> Deactivate Emergency Mode
+                    <span class="absolute inset-0 w-full h-full bg-white/20 animate-pulse"></span>
+                    <span class="relative flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Deactivate Emergency Mode
+                    </span>
                 {% else %}
-                <span class="w-2 h-2 rounded-full bg-red-900 mr-2"></span> Activate Emergency Mode
+                    <span class="relative flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-red-500 group-hover:text-red-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Activate Emergency Mode
+                    </span>
                 {% endif %}
             </button>
         </form>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+        
         <div class="lg:col-span-2 space-y-8">
             
-            <div class="glass-card rounded-2xl p-8 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-                <h2 class="text-lg font-medium text-gray-400 mb-2">Total Balance</h2>
+            <div class="relative overflow-hidden bg-gray-800/40 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8 shadow-2xl group">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-blue-600/20 transition-all duration-700"></div>
+                
+                <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-1">Total Available Balance</h2>
                 <div class="flex items-baseline gap-4">
-                    <span class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-blue-200">
+                    <span class="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-blue-300">
                         ₹{{ "%.2f"|format(account.balance) }}
                     </span>
-                    <span class="px-2 py-1 rounded bg-green-500/10 text-green-400 text-xs font-mono border border-green-500/20">+2.4%</span>
                 </div>
-                <p class="mt-4 text-sm text-gray-500 font-mono">Account: {{ account_number }}</p>
+                <div class="mt-6 flex items-center justify-between">
+                    <p class="text-sm text-gray-500 font-mono bg-gray-900/50 px-3 py-1 rounded-lg border border-gray-700/50 inline-block">
+                        Acc: <span class="text-gray-300">{{ account_number }}</span>
+                    </p>
+                    <div class="flex space-x-2">
+                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            Active
+                        </span>
+                    </div>
+                </div>
             </div>
 
-            <div class="glass-card rounded-2xl p-8">
-                <h2 class="text-xl font-bold text-white mb-6 flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-                    Quick Transfer
-                </h2>
+            <div class="bg-gray-800/40 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8 shadow-xl">
+                <div class="flex items-center mb-6">
+                    <div class="p-2 bg-blue-500/10 rounded-lg mr-3">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">Quick Transfer</h2>
+                </div>
+
                 {% if account.emergency_mode %}
-                <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-6 text-center">
-                    <p class="text-red-400 font-medium">Transfers disabled in Emergency Mode.</p>
+                <div class="bg-red-900/10 border border-red-500/20 rounded-xl p-8 text-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-500/10 mb-3">
+                        <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-1">Transfers Locked</h3>
+                    <p class="text-red-400 text-sm">Security mode is active. Disable it to resume transfers.</p>
                 </div>
                 {% else %}
                 <form id="transfer-form" method="post" action="{{ url_for('transfer') }}" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Recipient Account</label>
-                            <input type="text" id="recipient-account" name="recipient_account"
-                                   class="w-full px-4 py-3 glass-input rounded-xl font-mono text-sm focus:ring-2 focus:ring-blue-500"
-                                   placeholder="SB1234567890" required>
-                            <div id="recipient-name-display" class="mt-2 text-xs font-medium min-h-[1.25rem]"></div>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider">Recipient Account</label>
+                            <div class="relative">
+                                <input type="text" id="recipient-account" name="recipient_account"
+                                       class="w-full pl-4 pr-4 py-3 bg-gray-900/50 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-mono text-sm"
+                                       placeholder="SB1234567890" required>
+                            </div>
+                            <div id="recipient-name-display" class="h-5 text-xs font-medium"></div>
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Amount (₹)</label>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider">Amount (₹)</label>
                             <input type="number" id="amount" name="amount"
-                                   class="w-full px-4 py-3 glass-input rounded-xl font-mono text-sm focus:ring-2 focus:ring-blue-500"
+                                   class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-mono text-sm"
                                    placeholder="0.00" min="0.01" step="0.01" required>
                         </div>
                     </div>
                     <input type="hidden" id="recipient-name" name="recipient_name">
-                    <button type="submit" class="w-full py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-500 btn-glow shadow-lg transition-all">
+                    <button type="submit" class="w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 shadow-lg shadow-blue-900/20 transform transition-all active:scale-[0.98]">
                         Initiate Secure Transfer
                     </button>
                 </form>
@@ -74,69 +102,102 @@
             </div>
         </div>
 
-        <div class="glass-card rounded-2xl flex flex-col h-[500px] overflow-hidden">
-            <div class="p-4 border-b border-gray-700/50 bg-gray-800/30">
-                <h2 class="font-bold text-white flex items-center">
-                    <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span> AI Assistant
-                </h2>
+        <div class="lg:col-span-1">
+            <div class="glass-card bg-gray-800/40 backdrop-blur-xl border border-gray-700/50 rounded-2xl flex flex-col h-[600px] lg:h-full shadow-xl overflow-hidden">
+                <div class="p-4 border-b border-gray-700/50 bg-gray-900/40 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mr-3 shadow-lg">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-white text-sm">SecureBot AI</h2>
+                            <p class="text-xs text-green-400 flex items-center mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></span>Online</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="chat-box" class="flex-grow overflow-y-auto p-4 space-y-4 bg-gray-900/20 scroll-smooth">
+                    <div class="flex justify-start">
+                        <div class="bg-gray-800 border border-gray-700 text-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm max-w-[85%] text-sm shadow-sm">
+                            Hello! I'm SecureBot. How can I assist you today?
+                        </div>
+                    </div>
+                </div>
+                
+                <form id="chat-form" class="p-4 border-t border-gray-700/50 bg-gray-800/40">
+                    <div class="relative flex items-center">
+                        <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off"
+                               class="w-full pl-4 pr-12 py-3 bg-gray-900/50 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm">
+                        <button type="submit" class="absolute right-2 p-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors">
+                            <svg class="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div id="chat-box" class="flex-grow overflow-y-auto p-4 space-y-4 bg-gray-900/20">
-                <div class="chat-bubble bot">Hello! I'm SecureBot. How can I assist you today?</div>
-            </div>
-            <form id="chat-form" class="p-4 border-t border-gray-700/50 bg-gray-800/30 flex gap-2">
-                <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off"
-                       class="flex-grow px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500">
-                <button type="submit" class="p-2 bg-blue-600 rounded-lg text-white hover:bg-blue-500 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                </button>
-            </form>
         </div>
     </div>
 
-    <div class="glass-card rounded-2xl p-6 md:p-8">
+    <div class="mt-8 bg-gray-800/40 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 md:p-8 shadow-xl">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold text-white">Recent Activity</h2>
-            <a href="{{ url_for('history') }}" class="text-sm text-blue-400 hover:text-blue-300 font-medium">View All &rarr;</a>
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Recent Activity
+            </h2>
+            <a href="{{ url_for('history') }}" class="text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors flex items-center group">
+                View All 
+                <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </a>
         </div>
-        <div class="overflow-x-auto">
+        
+        <div class="overflow-x-auto rounded-xl border border-gray-700/30">
             <table class="w-full">
                 <thead>
-                    <tr class="text-left border-b border-gray-700/50">
-                        <th class="pb-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                        <th class="pb-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</th>
-                        <th class="pb-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Amount</th>
-                        <th class="pb-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Status</th>
+                    <tr class="text-left bg-gray-900/40 border-b border-gray-700/50">
+                        <th class="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-wider">Date</th>
+                        <th class="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-wider">Description</th>
+                        <th class="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Amount</th>
+                        <th class="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-wider text-center">Status</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700/30">
+                <tbody class="divide-y divide-gray-700/30 bg-gray-800/20">
                     {% for tx in transactions[:5] %}
-                    <tr class="group hover:bg-white/5 transition-colors">
-                        <td class="py-4 text-sm text-gray-300">{{ tx.timestamp|strftime('%b %d, %H:%M') }}</td>
-                        <td class="py-4 text-sm text-gray-300">
+                    <tr class="group hover:bg-white/[0.02] transition-colors">
+                        <td class="py-4 px-6 text-sm text-gray-400 font-mono">{{ tx.timestamp|strftime('%b %d, %H:%M') }}</td>
+                        <td class="py-4 px-6 text-sm text-gray-300">
                             {% if tx.sender_account == account_number %}
-                            <span class="text-gray-400">To:</span> <span class="text-white">{{ tx.recipient_name }}</span>
+                                <div class="flex items-center">
+                                    <span class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2 text-xs text-gray-400">To</span>
+                                    <span class="font-medium text-white">{{ tx.recipient_name }}</span>
+                                </div>
                             {% else %}
-                            <span class="text-gray-400">From:</span> <span class="text-white">{{ tx.sender_account }}</span>
+                                <div class="flex items-center">
+                                    <span class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2 text-xs text-gray-400">Fr</span>
+                                    <span class="font-medium text-white">{{ tx.sender_account }}</span>
+                                </div>
                             {% endif %}
                         </td>
-                        <td class="py-4 text-sm text-right font-medium">
+                        <td class="py-4 px-6 text-sm text-right font-bold">
                             {% if tx.sender_account == account_number %}
-                            <span class="text-red-400">- ₹{{ "%.2f"|format(tx.amount) }}</span>
+                            <span class="text-red-400 flex items-center justify-end">
+                                - ₹{{ "%.2f"|format(tx.amount) }}
+                            </span>
                             {% else %}
-                            <span class="text-emerald-400">+ ₹{{ "%.2f"|format(tx.amount) }}</span>
+                            <span class="text-emerald-400 flex items-center justify-end">
+                                + ₹{{ "%.2f"|format(tx.amount) }}
+                            </span>
                             {% endif %}
                         </td>
-                        <td class="py-4 text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                {% if tx.status|lower == 'completed' %} bg-emerald-500/10 text-emerald-400 border border-emerald-500/20
-                                {% elif tx.status|lower == 'failed' %} bg-red-500/10 text-red-400 border border-red-500/20
-                                {% else %} bg-amber-500/10 text-amber-400 border border-amber-500/20 {% endif %}">
+                        <td class="py-4 px-6 text-center">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border
+                                {% if tx.status|lower == 'completed' %} bg-emerald-500/10 text-emerald-400 border-emerald-500/20
+                                {% elif tx.status|lower == 'failed' %} bg-red-500/10 text-red-400 border-red-500/20
+                                {% else %} bg-amber-500/10 text-amber-400 border-amber-500/20 {% endif %}">
                                 {{ tx.status }}
                             </span>
                         </td>
                     </tr>
                     {% else %}
-                    <tr><td colspan="4" class="py-8 text-center text-gray-500 italic">No recent transactions.</td></tr>
+                    <tr><td colspan="4" class="py-8 text-center text-gray-500 italic">No recent transactions recorded.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -147,16 +208,34 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<style>
+    /* Custom Scrollbar for Chat */
+    #chat-box::-webkit-scrollbar {
+        width: 6px;
+    }
+    #chat-box::-webkit-scrollbar-track {
+        background: rgba(17, 24, 39, 0.5); 
+    }
+    #chat-box::-webkit-scrollbar-thumb {
+        background: rgba(75, 85, 99, 0.5); 
+        border-radius: 3px;
+    }
+    #chat-box::-webkit-scrollbar-thumb:hover {
+        background: rgba(107, 114, 128, 0.8); 
+    }
+</style>
+
 <script>
-    // Recipient Verification
+    // --- Recipient Verification ---
     const recipientInput = document.getElementById('recipient-account');
     const nameDisplay = document.getElementById('recipient-name-display');
     const hiddenNameInput = document.getElementById('recipient-name');
 
     recipientInput.addEventListener('blur', function() {
         const accNum = this.value;
-        if (accNum.length >= 10) {
-            nameDisplay.innerHTML = '<span class="text-gray-500 animate-pulse">Verifying...</span>';
+        if (accNum.length >= 5) { // Simple check length
+            nameDisplay.innerHTML = '<span class="text-gray-500 flex items-center text-xs"><svg class="animate-spin -ml-1 mr-2 h-3 w-3 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Verifying...</span>';
+            
             fetch("{{ url_for('verify_recipient') }}", {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -165,23 +244,30 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    nameDisplay.innerHTML = `<span class="text-emerald-400 flex items-center"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Verified: ${data.recipient_name}</span>`;
+                    nameDisplay.innerHTML = `<span class="text-emerald-400 flex items-center text-xs font-bold animate-fadeIn"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> ${data.recipient_name}</span>`;
                     hiddenNameInput.value = data.recipient_name;
-                    recipientInput.classList.add('border-emerald-500');
+                    recipientInput.classList.add('border-emerald-500', 'ring-1', 'ring-emerald-500/50');
+                    recipientInput.classList.remove('border-gray-600');
                 } else {
-                    nameDisplay.innerHTML = `<span class="text-red-400">Account not found</span>`;
+                    nameDisplay.innerHTML = `<span class="text-red-400 flex items-center text-xs font-bold"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Account not found</span>`;
                     hiddenNameInput.value = '';
-                    recipientInput.classList.add('border-red-500');
+                    recipientInput.classList.add('border-red-500', 'ring-1', 'ring-red-500/50');
+                    recipientInput.classList.remove('border-gray-600');
                 }
+            })
+            .catch(err => {
+                nameDisplay.innerHTML = '';
             });
         }
     });
+
     recipientInput.addEventListener('input', () => {
-        recipientInput.classList.remove('border-emerald-500', 'border-red-500');
+        recipientInput.classList.remove('border-emerald-500', 'border-red-500', 'ring-1', 'ring-emerald-500/50', 'ring-red-500/50');
+        recipientInput.classList.add('border-gray-600');
         nameDisplay.innerHTML = '';
     });
 
-    // Chatbot
+    // --- Modern Chatbot Script ---
     const chatForm = document.getElementById('chat-form');
     const chatBox = document.getElementById('chat-box');
     const chatInput = document.getElementById('chat-input');
@@ -191,8 +277,27 @@
         const msg = chatInput.value.trim();
         if(!msg) return;
 
-        chatBox.innerHTML += `<div class="chat-bubble user">${msg}</div>`;
+        // User Message Bubble
+        chatBox.innerHTML += `
+            <div class="flex justify-end animate-fadeIn">
+                <div class="bg-indigo-600 text-white px-4 py-3 rounded-2xl rounded-tr-sm max-w-[85%] text-sm shadow-md">
+                    ${msg}
+                </div>
+            </div>`;
+        
         chatInput.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Bot typing indicator placeholder
+        const loadingId = 'loading-' + Date.now();
+        chatBox.innerHTML += `
+            <div id="${loadingId}" class="flex justify-start animate-fadeIn">
+                <div class="bg-gray-800 border border-gray-700 text-gray-400 px-4 py-3 rounded-2xl rounded-tl-sm text-sm shadow-sm flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce"></span>
+                    <span class="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce delay-75"></span>
+                    <span class="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce delay-150"></span>
+                </div>
+            </div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
 
         fetch("{{ url_for('chatbot') }}", {
@@ -202,7 +307,16 @@
         })
         .then(res => res.json())
         .then(data => {
-            chatBox.innerHTML += `<div class="chat-bubble bot">${data.response}</div>`;
+            // Remove typing indicator
+            document.getElementById(loadingId).remove();
+            
+            // Bot Response Bubble
+            chatBox.innerHTML += `
+                <div class="flex justify-start animate-fadeIn">
+                    <div class="bg-gray-800 border border-gray-700 text-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm max-w-[85%] text-sm shadow-sm">
+                        ${data.response}
+                    </div>
+                </div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
         });
     });

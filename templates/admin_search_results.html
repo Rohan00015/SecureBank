@@ -1,66 +1,100 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div>
-    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-8 pb-4 border-b border-gray-700">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-8 pb-6 border-b border-gray-700/50">
         <div>
-            <h1 class="text-3xl font-bold text-white">History for {{ user.full_name or user.email }}</h1>
-            <p class="mt-1 text-gray-400">
-                Account: <span class="font-mono text-gray-200">{{ account_number }}</span> | Balance: <span class="text-green-400 font-bold">₹{{ "%.2f"|format(account.balance) }}</span>
-            </p>
+            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
+                History for {{ user.full_name or user.email }}
+            </h1>
+            <div class="mt-3 flex flex-wrap gap-3">
+                <div class="inline-flex items-center px-3 py-1 rounded-lg bg-gray-800/50 border border-gray-700/50">
+                    <span class="text-xs text-gray-400 uppercase tracking-wider mr-2">Account</span>
+                    <span class="font-mono text-gray-200 font-medium">{{ account_number }}</span>
+                </div>
+                <div class="inline-flex items-center px-3 py-1 rounded-lg bg-emerald-900/20 border border-emerald-500/20">
+                    <span class="text-xs text-emerald-400 uppercase tracking-wider mr-2">Balance</span>
+                    <span class="font-bold text-emerald-400">₹{{ "%.2f"|format(account.balance) }}</span>
+                </div>
+            </div>
         </div>
-        <a href="{{ url_for('admin_dashboard') }}" class="mt-4 sm:mt-0 px-4 py-2 rounded-md font-semibold text-sm text-gray-200 bg-gray-600 hover:bg-gray-500">
-            Back to Admin Panel
-        </a>
+        <div class="mt-6 lg:mt-0">
+            <a href="{{ url_for('admin_dashboard') }}" class="inline-flex items-center px-5 py-2.5 rounded-xl font-semibold text-sm text-gray-300 bg-gray-800 hover:bg-gray-700 border border-gray-600 hover:border-gray-500 transition-all shadow-lg">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Back to Dashboard
+            </a>
+        </div>
     </div>
 
-    <div class="bg-gray-800/70 border border-gray-700 shadow-xl rounded-xl p-6 mb-8">
-        <h2 class="text-xl font-semibold text-white mb-4">Full Transaction History</h2>
+    <div class="bg-gray-800/40 backdrop-blur-xl border border-gray-700/50 shadow-2xl rounded-2xl overflow-hidden mb-10">
+        <div class="p-6 border-b border-gray-700/50 bg-gray-900/20">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                Transaction History
+            </h2>
+        </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <thead>
-                    <tr class="bg-gray-700/50">
-                        <th class="p-3 text-sm font-semibold text-gray-300 uppercase tracking-wider">Date</th>
-                        <th class="p-3 text-sm font-semibold text-gray-300 uppercase tracking-wider">Transaction ID</th>
-                        <th class="p-3 text-sm font-semibold text-gray-300 uppercase tracking-wider">Description</th>
-                        <th class="p-3 text-sm font-semibold text-gray-300 uppercase tracking-wider text-right">Amount</th>
-                        <th class="p-3 text-sm font-semibold text-gray-300 uppercase tracking-wider text-center">Status</th>
+                    <tr class="bg-gray-800/80 backdrop-blur-sm border-b border-gray-700">
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Date</th>
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Transaction ID</th>
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Description</th>
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Amount</th>
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-center">Status</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700">
+                <tbody class="divide-y divide-gray-700/50">
                     {% for tx in transactions %}
-                    <tr class="hover:bg-gray-700/30">
-                        <td class="p-3 text-sm text-gray-300 whitespace-nowrap">{{ tx.timestamp|strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                        <td class="p-3 text-sm text-gray-300 font-mono text-xs">{{ tx.id }}</td>
-                        <td class="p-3 text-sm text-gray-300">
+                    <tr class="hover:bg-white/[0.02] transition-colors duration-150">
+                        <td class="p-4 text-sm text-gray-300 whitespace-nowrap font-mono">{{ tx.timestamp|strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td class="p-4 text-xs text-gray-500 font-mono select-all">{{ tx.id }}</td>
+                        <td class="p-4 text-sm text-gray-300">
                             {% if tx.sender_account == account_number %}
-                                <span class="text-red-400">Sent to:</span> {{ tx.recipient_name }} ({{ tx.recipient_account }})
+                                <span class="flex items-center text-red-300">
+                                    <span class="mr-1.5 opacity-70">Sent to</span>
+                                    <span class="font-medium text-white">{{ tx.recipient_name }}</span>
+                                    <span class="text-xs text-gray-500 ml-1 font-mono">({{ tx.recipient_account }})</span>
+                                </span>
                             {% elif tx.sender_account == 'ADMIN' %}
-                                <span class="text-green-400">{{ tx.type }}</span>
+                                <span class="flex items-center text-emerald-400 font-medium">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    {{ tx.type }}
+                                </span>
                             {% else %}
-                                <span class="text-green-400">Received from:</span> {{ tx.sender_account }}
+                                <span class="flex items-center text-green-300">
+                                    <span class="mr-1.5 opacity-70">Received from</span>
+                                    <span class="font-medium text-white">{{ tx.sender_account }}</span>
+                                </span>
                             {% endif %}
                         </td>
-                        <td class="p-3 text-sm text-right font-medium">
+                        <td class="p-4 text-sm text-right font-bold">
                             {% if tx.sender_account == account_number %}
-                                <span class="text-red-400">- ₹{{ "%.2f"|format(tx.amount) }}</span>
+                                <span class="text-red-400 flex items-center justify-end">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
+                                    - ₹{{ "%.2f"|format(tx.amount) }}
+                                </span>
                             {% else %}
-                                <span class="text-green-400">+ ₹{{ "%.2f"|format(tx.amount) }}</span>
+                                <span class="text-emerald-400 flex items-center justify-end">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                                    + ₹{{ "%.2f"|format(tx.amount) }}
+                                </span>
                             {% endif %}
                         </td>
-                        <td class="p-3 text-sm text-center">
-                            <span class="rounded-full px-2 py-0.5 text-xs font-medium 
-                                {% if tx.status|lower == 'completed' %} bg-green-900 text-green-300
-                                {% elif tx.status|lower == 'failed' %} bg-red-900 text-red-300
-                                {% elif tx.status|lower == 'refunded' %} bg-yellow-900 text-yellow-300
-                                {% else %} bg-gray-600 text-gray-200 {% endif %}">
+                        <td class="p-4 text-center">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border
+                                {% if tx.status|lower == 'completed' %} bg-green-500/10 text-green-400 border-green-500/20
+                                {% elif tx.status|lower == 'failed' %} bg-red-500/10 text-red-400 border-red-500/20
+                                {% elif tx.status|lower == 'refunded' %} bg-amber-500/10 text-amber-400 border-amber-500/20
+                                {% else %} bg-gray-500/10 text-gray-400 border-gray-500/20 {% endif %}">
                                 {{ tx.status }}
                             </span>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="5" class="p-4 text-center text-gray-400">This user has no transaction history.</td>
+                        <td colspan="5" class="p-8 text-center text-gray-500 italic">This user has no transaction history recorded.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -68,34 +102,43 @@
         </div>
     </div>
 
-    <div class="bg-gray-800/70 border border-gray-700 shadow-xl rounded-xl p-6">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-white">Login History</h2>
-            <a href="{{ url_for('location_map', user_id=user.id) }}" class="px-3 py-1 rounded-md font-semibold text-xs text-blue-300 bg-blue-900/50 hover:bg-blue-800">
-                View on Map
+    <div class="bg-gray-800/40 backdrop-blur-xl border border-gray-700/50 shadow-2xl rounded-2xl overflow-hidden">
+        <div class="p-6 border-b border-gray-700/50 bg-gray-900/20 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <svg class="w-5 h-5 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                Login History
+            </h2>
+            <a href="{{ url_for('location_map', user_id=user.id) }}" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 transition-all">
+                <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                View Map Visualization
             </a>
-            </div>
+        </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <thead>
-                    <tr class="bg-gray-700/50">
-                        <th class="p-3 text-sm font-semibold text-gray-300 uppercase tracking-wider">Login Timestamp</th>
-                        <th class="p-3 text-sm font-semibold text-gray-300 uppercase tracking-wider">IP Address</th>
-                        <th class="p-3 text-sm font-semibold text-gray-300 uppercase tracking-wider">Location</th>
-                        <th class="p-3 text-sm font-semibold text-gray-300 uppercase tracking-wider">Device Information</th>
+                    <tr class="bg-gray-800/80 backdrop-blur-sm border-b border-gray-700">
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Login Timestamp</th>
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">IP Address</th>
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Location</th>
+                        <th class="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Device Information</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700">
+                <tbody class="divide-y divide-gray-700/50">
                     {% for login in logins %}
-                    <tr class="hover:bg-gray-700/30">
-                        <td class="p-3 text-sm text-gray-300 whitespace-nowrap">{{ login.timestamp|strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                        <td class="p-3 text-sm text-gray-300 font-mono">{{ login.ip_address }}</td>
-                        <td class="p-3 text-sm text-gray-300">{{ login.location }}</td>
-                        <td class="p-3 text-xs text-gray-400">{{ login.device_info }}</td>
+                    <tr class="hover:bg-white/[0.02] transition-colors duration-150">
+                        <td class="p-4 text-sm text-gray-300 whitespace-nowrap font-mono">{{ login.timestamp|strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td class="p-4 text-sm text-blue-400 font-mono">{{ login.ip_address }}</td>
+                        <td class="p-4 text-sm text-gray-300 flex items-center">
+                            <svg class="w-3 h-3 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            {{ login.location }}
+                        </td>
+                        <td class="p-4 text-xs text-gray-400 max-w-md truncate" title="{{ login.device_info }}">
+                            {{ login.device_info }}
+                        </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="4" class="p-4 text-center text-gray-400">This user has no login history.</td>
+                        <td colspan="4" class="p-8 text-center text-gray-500 italic">No login events detected.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
